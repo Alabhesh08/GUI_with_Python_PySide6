@@ -11,10 +11,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("My App")
 
         button = QPushButton("Press Me!")
-
         #Set the central widget of the window.
         self.setCentralWidget(button)
-
+        self.centralWidget.setStyleSheet("QLineEdit { background: red }")
+        
 app = QApplication(sys.argv)
 
 window = MainWindow()
