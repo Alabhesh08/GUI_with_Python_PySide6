@@ -2,7 +2,7 @@
 
 import sys
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QMenu
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QMenu
 from PySide6.QtCore import Qt
 
 
