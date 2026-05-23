@@ -32,13 +32,14 @@ class MainWindow(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Space:
-            self.widget.A = 'N'
-            # print("Key Space")
+            if event.isAutoRepeat():
+                self.widget.A = 'N'
+                self.setWindowTitle("Holding Space Key")
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Space:
             self.widget.A = ''
-        # print("Key Released")
+            self.setWindowTitle("Space Key Released")
 
     class QLabel(QLabel):
         def mousePressEvent(self, ev):
