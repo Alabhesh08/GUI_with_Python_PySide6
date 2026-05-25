@@ -22,31 +22,27 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        # slider = QSlider()
-        slider = QSlider(Qt.Orientation.Horizontal)
-        slider.setMinimum(-10)
-        slider.setMaximum(3)
-        # Or: slider.setRange(-10,3)
+        dial = QDial()
+        dial.setRange(-10, 100)
+        dial.setSingleStep(1)
 
-        slider.setSingleStep(3)
+        dial.valueChanged.connect(self.value_changed)
+        dial.sliderMoved.connect(self.dial_position)
+        dial.sliderPressed.connect(self.dial_pressed)
+        dial.sliderReleased.connect(self.dial_released)
 
-        slider.valueChanged.connect(self.value_changed)
-        slider.sliderMoved.connect(self.slider_position)
-        slider.sliderPressed.connect(self.slider_pressed)
-        slider.sliderReleased.connect(self.slider_released)
-
-        self.setCentralWidget(slider)
+        self.setCentralWidget(dial)
 
     def value_changed(self, value):
         print(value)
 
-    def slider_position(self, position):
+    def dial_position(self, position):
         print("position", position)
 
-    def slider_pressed(self):
+    def dial_pressed(self):
         print("Pressed!")
 
-    def slider_released(self):
+    def dial_released(self):
         print("Released")
 
 app = QApplication(sys.argv)
