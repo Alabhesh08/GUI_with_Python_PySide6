@@ -1,0 +1,12 @@
+import sys
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QApplication
+from widget import Widget
+
+app = QApplication(sys.argv)
+
+window = Widget()
+window.show()
+
+app.exec()
