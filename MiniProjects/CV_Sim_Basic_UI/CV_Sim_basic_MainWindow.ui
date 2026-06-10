@@ -6,19 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1155</width>
-    <height>849</height>
+    <width>1154</width>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>710</y>
+      <width>1131</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka Heading</family>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>Metrics Panel</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>1111</width>
+       <height>49</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QLabel" name="Different_Metric_label">
+        <property name="text">
+         <string>HR       |       CO       |       MAP       |       SV       |       EF       |       LV Pressure       |       Aortic Pressure    </string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>11</y>
       <width>1131</width>
       <height>691</height>
      </rect>
@@ -56,14 +94,14 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>30</height>
+             <width>100</width>
+             <height>50</height>
             </size>
            </property>
            <property name="font">
             <font>
-             <family>Sitka Heading</family>
-             <pointsize>10</pointsize>
+             <family>Sitka Small</family>
+             <pointsize>14</pointsize>
              <bold>true</bold>
             </font>
            </property>
@@ -80,6 +118,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <family>Sitka Heading</family>
@@ -88,7 +132,7 @@
             </font>
            </property>
            <property name="text">
-            <string>HR</string>
+            <string>HR :</string>
            </property>
           </widget>
          </item>
@@ -100,6 +144,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <family>Sitka Heading</family>
@@ -108,7 +158,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Resistance</string>
+            <string>Resistance :</string>
            </property>
           </widget>
          </item>
@@ -120,6 +170,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <family>Sitka Heading</family>
@@ -128,7 +184,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Compliance</string>
+            <string>Compliance :</string>
            </property>
           </widget>
          </item>
@@ -140,6 +196,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <family>Sitka Heading</family>
@@ -148,7 +210,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Contractility</string>
+            <string>Contractility :</string>
            </property>
           </widget>
          </item>
@@ -166,6 +228,12 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
            </property>
            <property name="maximumSize">
             <size>
@@ -186,6 +254,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>150</width>
@@ -205,6 +279,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>150</width>
@@ -221,10 +301,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QLabel" name="realtime_plots_label">
          <property name="sizePolicy">
@@ -239,62 +316,38 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="PT_plot_widget" native="true"/>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="PlotWidget" name="PT_plot_widget" native="true"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QWidget" name="FT_plot_widget" native="true"/>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="PlotWidget" name="FT_plot_widget" native="true"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QWidget" name="PV_plot_widget" native="true"/>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="PlotWidget" name="PV_plot_widget" native="true"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
     </layout>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>710</y>
-      <width>1131</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Sitka Heading</family>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>Metrics Panel</string>
-    </property>
-    <widget class="QWidget" name="">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>1111</width>
-       <height>49</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
-      <item>
-       <widget class="QLabel" name="metrics_panel_label">
-        <property name="text">
-         <string>Metrics Panel</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="Different_Metric_label">
-        <property name="text">
-         <string>HR | CO | MAP | SV | EF | LV Pressure | Aortic Pressure    </string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -302,7 +355,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1155</width>
+     <width>1154</width>
      <height>25</height>
     </rect>
    </property>
@@ -315,6 +368,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
