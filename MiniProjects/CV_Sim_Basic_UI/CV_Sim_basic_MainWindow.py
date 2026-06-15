@@ -48,6 +48,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_plots)
         self.timer.start(50)
+        self.timer_flag = True
+
+        self.pause_button.clicked.connect(self.pause_event)
+
+        self.start_button.clicked.connect(self.start_event)
+
+    def pause_event(self):
+        if self.timer_flag:
+            self.timer.stop()
+            self.timer_flag = False
+
+    def start_event(self):
+        if not self.timer_flag:
+            self.timer.start()
+            self.timer_flag = True
 
     def update_plots(self):
 
