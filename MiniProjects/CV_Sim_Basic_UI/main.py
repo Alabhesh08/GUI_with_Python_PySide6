@@ -10,5 +10,5 @@ app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
 
-apply_stylesheet(app, theme="dark_medical.xml")
+# apply_stylesheet(app, theme="dark_medical.xml")
 app.exec()

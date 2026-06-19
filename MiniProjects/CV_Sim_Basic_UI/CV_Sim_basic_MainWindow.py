@@ -1,96 +1,216 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow
 from ui_CV_Sim_basic_MainWindow import Ui_MainWindow
+
 import numpy as np
 import pyqtgraph as pg
+
 from PySide6.QtCore import QTimer
 
+from ECG_simulator import ecg
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
+
     def __init__(self):
         super().__init__()
 
-        
         self.setupUi(self)
-        self.setWindowTitle("Basic Simulator Layout")
 
-        # start simulating 3 graphs
-        # Example x-axis
-        self.x = np.linspace(0, 10, 500)
+        self.setWindowTitle(
+            "Basic Simulator Layout"
+        )
 
-        # Create curves
+        # -------------------------------
+        # Data
+        # -------------------------------
+
+        self.x = np.linspace(
+            0,
+            10,
+            500
+        )
+
+        self.ecg_signal = ecg()
+
+        self.ecg_index = 0
+
+        self.ecg_buffer_length = 500
+
+        self.ecg_display = np.zeros(
+            self.ecg_buffer_length
+        )
+
+        self.t = 0
+
+        # -------------------------------
+        # Curves
+        # -------------------------------
+
         self.pt_curve = self.PT_plot_widget.plot(
-            pen=pg.mkPen('#00E5FF', width=2)
+            pen=pg.mkPen(
+                '#00E5FF',
+                width=2
+            )
         )
 
         self.ft_curve = self.FT_plot_widget.plot(
-            pen=pg.mkPen('#22C55E', width=2)
+            pen=pg.mkPen(
+                '#22C55E',
+                width=2
+            )
         )
 
         self.pv_curve = self.PV_plot_widget.plot(
-            pen=pg.mkPen('#F59E0B', width=2)
+            pen=pg.mkPen(
+                '#F59E0B',
+                width=2
+            )
         )
 
+        # -------------------------------
         # Titles
-        self.PT_plot_widget.setTitle("Pressure vs Time")
-        self.FT_plot_widget.setTitle("Flow vs Time")
-        self.PV_plot_widget.setTitle("Pressure-Volume Loop")
+        # -------------------------------
 
+        self.PT_plot_widget.setTitle(
+            "Pressure vs Time"
+        )
+
+        self.FT_plot_widget.setTitle(
+            "Flow vs Time"
+        )
+
+        self.PV_plot_widget.setTitle(
+            "ECG vs Time"
+        )
+
+        # -------------------------------
         # Grid
+        # -------------------------------
+
         for plot in [
             self.PT_plot_widget,
             self.FT_plot_widget,
             self.PV_plot_widget
         ]:
-            plot.showGrid(x=True, y=True, alpha=0.3)
 
-        self.t = 0
+            plot.showGrid(
+                x=True,
+                y=True,
+                alpha=0.3
+            )
+
+        # -------------------------------
+        # Timer
+        # -------------------------------
 
         self.timer = QTimer()
-        self.timer.timeout.connect(self.update_plots)
+
+        self.timer.timeout.connect(
+            self.update_plots
+        )
+
         self.timer.start(50)
+
         self.timer_flag = True
 
-        self.pause_button.clicked.connect(self.pause_event)
+        # -------------------------------
+        # Buttons
+        # -------------------------------
 
-        self.start_button.clicked.connect(self.start_event)
+        self.pause_button.clicked.connect(
+            self.pause_event
+        )
+
+        self.start_button.clicked.connect(
+            self.start_event
+        )
+
+    # =================================
 
     def pause_event(self):
+
         if self.timer_flag:
+
             self.timer.stop()
+
             self.timer_flag = False
 
+    # =================================
+
     def start_event(self):
+
         if not self.timer_flag:
+
             self.timer.start()
+
             self.timer_flag = True
+
+    # =================================
 
     def update_plots(self):
 
         self.t += 0.1
 
-        pressure = 120 + 20*np.sin(self.x + self.t)
+        # -------------------------
+        # Pressure-Time
+        # -------------------------
 
-        flow = 5*np.sin(
-            2*(self.x + self.t)
+        pressure = (
+            120
+            + 20 * np.sin(
+                self.x + self.t
+            )
         )
 
-        volume = 120 + 40*np.sin(self.x + self.t)
-
-        # Pressure-Time
         self.pt_curve.setData(
             self.x,
             pressure
         )
 
+        # -------------------------
         # Flow-Time
+        # -------------------------
+
+        flow = (
+            5
+            * np.sin(
+                2 * (self.x + self.t)
+            )
+        )
+
         self.ft_curve.setData(
             self.x,
             flow
         )
 
-        # Pressure-Volume Loop
+        # -------------------------
+        # Realtime ECG
+        # -------------------------
+
+        samples_per_tick = 12
+
+        for _ in range(samples_per_tick):
+
+            new_sample = self.ecg_signal[
+                self.ecg_index
+            ]
+
+            self.ecg_index += 1
+
+            if self.ecg_index >= len(
+                self.ecg_signal
+            ):
+                self.ecg_index = 0
+
+            self.ecg_display[:-1] = (
+                self.ecg_display[1:]
+            )
+
+            self.ecg_display[-1] = (
+                new_sample
+            )
+
         self.pv_curve.setData(
-            volume,
-            pressure
+            self.ecg_display
         )
-        
