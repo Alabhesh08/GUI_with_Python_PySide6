@@ -2,6 +2,8 @@ from PySide6.QtCore import (
     QObject,
     QThread,
     Signal,
+    QTimer,
+    QElapsedTimer,
 )
 
 from PySide6.QtWidgets import (
@@ -59,9 +61,30 @@ class MainWindow(QMainWindow):
         self.thread = None
         self.worker = None
 
+        self.V = None
+        self.p = None
+        self.q = None
+        self.t = None
         self.connect_signals()
 
         self.initialize_plots()
+
+        self.play_timer = QTimer(self)
+        self.play_timer.timeout.connect(self.update_playback)
+
+        # ~60 FPS
+        self.play_timer.setInterval(16)
+
+        self.elapsed_timer = QElapsedTimer()
+
+        # Playback speed multiplier
+        self.playback_speed = 1.0
+
+        # Visible window
+        self.window_duration = 3.0
+
+        # Gap at right edge
+        self.right_margin = 0.20
 
     # ==================================================
     # SIGNALS
@@ -105,22 +128,61 @@ class MainWindow(QMainWindow):
 
         self.ui.aorticPressurePlot.showGrid(
             x=True,
-            y=True
+            y=True,
+            alpha=0.2
         )
 
         self.ui.lvPressurePlot.showGrid(
             x=True,
-            y=True
+            y=True,
+            alpha=0.2
         )
 
         self.ui.volumePlot.showGrid(
             x=True,
-            y=True
+            y=True,
+            alpha=0.2
         )
 
         self.ui.flowPlot.showGrid(
             x=True,
-            y=True
+            y=True,
+            alpha=0.2
+        )
+
+        # ==================================================
+        # CREATE CURVES (ONLY ONCE)
+        # ==================================================
+
+        self.aorticCurve = self.ui.aorticPressurePlot.plot(
+            pen='r'
+        )
+
+        self.lvCurve = self.ui.lvPressurePlot.plot(
+            pen='y'
+        )
+
+        self.lvVolumeCurve = self.ui.volumePlot.plot(
+            pen='g',
+            name="LV"
+        )
+
+        self.aortaVolumeCurve = self.ui.volumePlot.plot(
+            pen='c',
+            name="Aorta"
+        )
+
+        self.veinVolumeCurve = self.ui.volumePlot.plot(
+            pen='m',
+            name="Veins"
+        )
+
+        self.aorticFlowCurve = self.ui.flowPlot.plot(
+            pen='w'
+        )
+
+        self.mitralFlowCurve = self.ui.flowPlot.plot(
+            pen='g'
         )
 
     # ==================================================
@@ -208,16 +270,24 @@ class MainWindow(QMainWindow):
         t,
     ):
 
-        self.update_plots(
-            V,
-            p,
-            q,
-            t,
-        )
+        self.V = V
+        self.p = p
+        self.q = q
+        self.t = t
 
-        self.update_status(
-            t
-        )
+        self.elapsed_timer.restart()
+
+        self.aorticCurve.setData([], [])
+        self.lvCurve.setData([], [])
+
+        self.lvVolumeCurve.setData([], [])
+        self.aortaVolumeCurve.setData([], [])
+        self.veinVolumeCurve.setData([], [])
+
+        self.aorticFlowCurve.setData([], [])
+        self.mitralFlowCurve.setData([], [])
+
+        self.play_timer.start()
 
         self.ui.lblSimBaroreflex.setText(
             "Enabled"
@@ -237,21 +307,138 @@ class MainWindow(QMainWindow):
             )
         )
 
-        self.log(
-            "Simulation completed."
+
+        
+    def update_playback(self):
+
+        # ----------------------------------------
+        # Playback time (real elapsed time)
+        # ----------------------------------------
+
+        elapsed = self.elapsed_timer.elapsed() / 1000.0
+
+        current_time = elapsed * self.playback_speed
+
+        dt = self.t[1] - self.t[0]
+
+        end = min(
+            int(current_time / dt),
+            len(self.t)
         )
 
-        self.ui.lblStatus.setText(
-            "Simulation completed"
+        # ----------------------------------------
+        # Visible window
+        # ----------------------------------------
+
+        window_samples = int(
+            self.window_duration / dt
         )
 
-        self.ui.lblStatusLeft.setText(
-            "Ready"
+        if end <= window_samples:
+
+            # -----------------------------
+            # Window still filling
+            # -----------------------------
+
+            start = 0
+
+            x_min = 0
+
+            x_max = self.window_duration + self.right_margin
+
+        else:
+
+            # -----------------------------
+            # Window full -> scroll
+            # -----------------------------
+
+            start = end - window_samples
+
+            x_min = self.t[start]
+
+            x_max = x_min + self.window_duration + self.right_margin
+
+        # ----------------------------------------
+        # Update curves
+        # ----------------------------------------
+
+        self.aorticCurve.setData(
+            self.t[start:end],
+            self.p["a"][start:end]
         )
 
-        self.ui.btnRun.setEnabled(
-            True
+        self.lvCurve.setData(
+            self.t[start:end],
+            self.p["l"][start:end]
         )
+
+        self.lvVolumeCurve.setData(
+            self.t[start:end],
+            self.V["l"][start:end]
+        )
+
+        self.aortaVolumeCurve.setData(
+            self.t[start:end],
+            self.V["a"][start:end]
+        )
+
+        self.veinVolumeCurve.setData(
+            self.t[start:end],
+            self.V["v"][start:end]
+        )
+
+        self.aorticFlowCurve.setData(
+            self.t[start:end],
+            self.q["lo"][start:end]
+        )
+
+        self.mitralFlowCurve.setData(
+            self.t[start:end],
+            self.q["li"][start:end]
+        )
+
+        # ----------------------------------------
+        # Scroll plots
+        # ----------------------------------------
+
+        for plot in (
+            self.ui.aorticPressurePlot,
+            self.ui.lvPressurePlot,
+            self.ui.volumePlot,
+            self.ui.flowPlot,
+        ):
+            plot.setXRange(
+                x_min,
+                x_max,
+                padding=0
+            )
+
+        # ----------------------------------------
+        # Finished
+        # ----------------------------------------
+
+        if end >= len(self.t):
+
+            self.play_timer.stop()
+
+            self.update_status(
+                self.t
+            )
+
+            self.ui.btnRun.setEnabled(True)
+
+            self.log(
+                "Simulation completed."
+            )
+
+            self.ui.lblStatus.setText(
+                "Simulation completed"
+            )
+
+            self.ui.lblStatusLeft.setText(
+                "Ready"
+            )
+            
     # ==================================================
     # PLOTS UPDATE
     # ==================================================

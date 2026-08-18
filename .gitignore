@@ -1,0 +1,22 @@
+# Exclude the detailed documentation file
+DOCUMENTATION.md
+documentation.md
+
+# Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+ENV/
+env/
+
+# IDE configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
